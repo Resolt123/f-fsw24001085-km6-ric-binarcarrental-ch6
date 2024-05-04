@@ -62,6 +62,8 @@ export const addCar =
     type,
     year,
     photo,
+    option,
+    spec,
     setIsLoading
   ) =>
   async (dispatch,getState) => {
@@ -84,6 +86,8 @@ export const addCar =
     data.append("available", available);
     data.append("type", type);
     data.append("year", year);
+    data.append("option",option);
+    data.append("spec",spec);
 
 
     let config = {

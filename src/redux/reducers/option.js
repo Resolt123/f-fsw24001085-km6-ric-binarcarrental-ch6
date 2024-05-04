@@ -17,7 +17,7 @@ const optionSlice = createSlice({
 });
 
 // export the setter funtion
-export const { setOption } = carSlice.actions;
+export const { setOption } = optionSlice.actions;
 
 // export the reducer
 export default optionSlice.reducer;

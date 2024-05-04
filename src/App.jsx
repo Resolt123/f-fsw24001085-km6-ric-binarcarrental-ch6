@@ -69,7 +69,7 @@ const router = createBrowserRouter([
       <Protected>
         <Navbar />
         <Container className="mt-5">
-          < CarProfile/>
+          <CarProfile />
         </Container>
       </Protected>
     ),
@@ -77,10 +77,10 @@ const router = createBrowserRouter([
   {
     path: "/tambah_mobil",
     element: (
-      <Protected>
+      <Protected roles={["admin"]}>
         <Navbar />
         <Container className="mt-5">
-          < Addcar/>
+          <Addcar />
         </Container>
       </Protected>
     ),

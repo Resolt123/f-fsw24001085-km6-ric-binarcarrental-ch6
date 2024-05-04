@@ -17,7 +17,7 @@ const specSlice = createSlice({
 });
 
 // export the setter funtion
-export const { setSpec } = carSlice.actions;
+export const { setSpec } = specSlice.actions;
 
 // export the reducer
 export default specSlice.reducer;

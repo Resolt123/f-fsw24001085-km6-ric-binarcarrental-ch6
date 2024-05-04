@@ -1,27 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addCar } from "../../redux/actions/cars";
 import { getOption } from "../../redux/actions/option";
 import { getSpec } from "../../redux/actions/spec";
 
-
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-    const { Options } = useSelector((state) => state.option);
-    const { Specs } = useSelector((state) => state.spec);
+  const { Options } = useSelector((state) => state.option);
+  const { Specs } = useSelector((state) => state.spec);
 
-    useEffect(() => {
-      // get car details by params id
-      dispatch(getOption());
-      dispatch(getSpec());
-    }, [dispatch]);
+  useEffect(() => {
+    // get car details by params id
+    dispatch(getOption());
+    dispatch(getSpec());
+  }, [dispatch]);
 
+  const handleCheckboxChange = (event, tipe) => {
+    const { value, checked } = event.target;
+    const numericValue = parseInt(value);
+    if (tipe == "Option") {
+      if (checked) {
+        setOption([...option, numericValue]);
+      } else {
+        setOption(option.filter((item) => item != numericValue));
+      }
+    } else if (tipe == "Spec") {
+      if (checked) {
+        setSpec([...spec, numericValue]);
+      } else {
+        setSpec(spec.filter((item) => item != numericValue));
+      }
+    }
+  };
 
   const [plate, setPlate] = useState("");
   const [manufacture, setManufacture] = useState("");
@@ -35,6 +51,8 @@ function Login() {
   const [type, setType] = useState("");
   const [year, setYear] = useState("");
   const [photo, setPhoto] = useState();
+  const [option, setOption] = useState([]);
+  const [spec, setSpec] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (e) => {
@@ -55,6 +73,8 @@ function Login() {
         type,
         year,
         photo,
+        option,
+        spec,
         setIsLoading
       )
     );
@@ -194,25 +214,36 @@ function Login() {
           option
         </Form.Label>
         <Col sm={10}>
-          <Form.Check
-            type="radio"
-            label="True"
-            name="option"
-            id="1"
-            value={true}
-            onChange={(e) => setAvailable(e.target.value)}
-          />
-          <Form.Check
-            type="radio"
-            label="False"
-            name="option"
-            id="2"
-            value={false}
-            onChange={(e) => setAvailable(e.target.value)}
-          />
+          {Options?.length > 0 &&
+            Options?.map((e) => (
+              <Form.Check
+                type="checkbox"
+                label={e.type_option}
+                value={e.id}
+                checked={option.includes(e.id)}
+                onChange={(el) => handleCheckboxChange(el, "Option")}
+              />
+            ))}
         </Col>
       </Form.Group>
-
+      <Form.Group as={Row} className="mb-3">
+        <Form.Label as="legend" column sm={2}>
+          option
+        </Form.Label>
+        <Col sm={10}>
+          {Specs[0]?.type_option}
+          {Specs?.length > 0 &&
+            Specs?.map((e) => (
+              <Form.Check
+                type="checkbox"
+                label={e.type_spec}
+                value={e.id}
+                checked={spec.includes(e.id)}
+                onChange={(el) => handleCheckboxChange(el, "Spec")}
+              />
+            ))}
+        </Col>
+      </Form.Group>
       <Form.Group controlId="photo" className="mb-3">
         <Form.Label>Image</Form.Label>
         <Form.Control
