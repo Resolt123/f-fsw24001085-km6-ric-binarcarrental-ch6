@@ -1,19 +1,42 @@
 import { useState, useEffect } from "react";
-import Button from "react-bootstrap/Button";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
-import { useNavigate } from "react-router-dom";
+import { Row, Col, Form, Image, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { addCar } from "../../redux/actions/cars";
+import { useParams, useNavigate } from "react-router-dom";
+import { getCar } from "../../redux/actions/cars";
 import { getOption } from "../../redux/actions/option";
 import { getSpec } from "../../redux/actions/spec";
+import { editCar } from "../../redux/actions/cars";
 
-function Addcar() {
+const Editcar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { id } = useParams();
+
+  const { Car } = useSelector((state) => state.cars);
   const { Options } = useSelector((state) => state.option);
   const { Specs } = useSelector((state) => state.spec);
+
+  const [plate, setPlate] = useState(`${Car?.plate}`);
+  const [manufacture, setManufacture] = useState(`${Car?.manufacture}`);
+  const [model, setModel] = useState(`${Car?.model}`);
+  const [rentPerDay, setRentPerDay] = useState(`${Car?.rentPerDay}`);
+  const [capacity, setCapacity] = useState(`${Car?.capacity}`);
+  const [description, setDescription] = useState(`${Car?.description}`);
+  const [availableAt, setAvailableAt] = useState(``);
+  const [transmission, setTransmission] = useState(`${Car?.transmission}`);
+  const [available, setAvailable] = useState(``);
+  const [type, setType] = useState(`${Car?.type}`);
+  const [year, setYear] = useState(`${Car?.year}`);
+  const [photo, setPhoto] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [selected_Option, setSelectedOptions] = useState({});
+  const [selected_Spec, setSelectedSpec] = useState({});
+
+
+  useEffect(() => {
+    // get car details by params id
+    dispatch(getCar(navigate, id));
+  }, [id, navigate]);
 
   useEffect(() => {
     // get car details by params id
@@ -21,46 +44,29 @@ function Addcar() {
     dispatch(getSpec());
   }, [dispatch]);
 
-  const handleCheckboxChange = (event, tipe) => {
-    const { value, checked } = event.target;
+  const handleSelectChange = (event, tipe) => {
+    const { name, value } = event.target;
     const numericValue = parseInt(value);
-    if (tipe == "Option") {
-      if (checked) {
-        setOption([...option, numericValue]);
-      } else {
-        setOption(option.filter((item) => item != numericValue));
-      }
-    } else if (tipe == "Spec") {
-      if (checked) {
-        setSpec([...spec, numericValue]);
-      } else {
-        setSpec(spec.filter((item) => item != numericValue));
-      }
+    if (tipe == "option") {
+      setSelectedOptions({
+        ...selected_Option,
+        [name]: numericValue,
+      });
+    } else if (tipe == "spec") {
+      setSelectedSpec({
+        ...selected_Spec,
+        [name]: numericValue,
+      });
     }
   };
-
-  const [plate, setPlate] = useState("");
-  const [manufacture, setManufacture] = useState("");
-  const [model, setModel] = useState("");
-  const [rentPerDay, setRentPerDay] = useState("");
-  const [capacity, setCapacity] = useState("");
-  const [description, setDescription] = useState("");
-  const [availableAt, setAvailableAt] = useState("");
-  const [transmission, setTransmission] = useState("");
-  const [available, setAvailable] = useState("");
-  const [type, setType] = useState("");
-  const [year, setYear] = useState("");
-  const [photo, setPhoto] = useState();
-  const [option, setOption] = useState([]);
-  const [spec, setSpec] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     // dispatch the register action
     dispatch(
-      addCar(
+    editCar(
         navigate,
+        id,
         plate,
         manufacture,
         model,
@@ -73,8 +79,8 @@ function Addcar() {
         type,
         year,
         photo,
-        option,
-        spec,
+        selected_Option,
+        selected_Spec,
         setIsLoading
       )
     );
@@ -92,7 +98,6 @@ function Addcar() {
           required
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="manufacture">
         <Form.Label>Manufacture</Form.Label>
         <Form.Control
@@ -103,7 +108,6 @@ function Addcar() {
           required
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="model">
         <Form.Label>Model</Form.Label>
         <Form.Control
@@ -114,7 +118,6 @@ function Addcar() {
           required
         />
       </Form.Group>
-
       <Form.Group className="mb-3" controlId="rentPerday">
         <Form.Label>RentPerDay</Form.Label>
         <Form.Control
@@ -208,41 +211,56 @@ function Addcar() {
           required
         />
       </Form.Group>
-
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label as="legend" column sm={2}>
-          option
-        </Form.Label>
-        <Col sm={10}>
-          {Options?.length > 0 &&
-            Options?.map((e) => (
-              <Form.Check
-                type="checkbox"
-                label={e.type_option}
-                value={e.id}
-                checked={option.includes(e.id)}
-                onChange={(el) => handleCheckboxChange(el, "Option")}
-              />
-            ))}
-        </Col>
-      </Form.Group>
-      <Form.Group as={Row} className="mb-3">
-        <Form.Label as="legend" column sm={2}>
-          option
-        </Form.Label>
-        <Col sm={10}>
-          {Specs?.length > 0 &&
-            Specs?.map((e) => (
-              <Form.Check
-                type="checkbox"
-                label={e.type_spec}
-                value={e.id}
-                checked={spec.includes(e.id)}
-                onChange={(el) => handleCheckboxChange(el, "Spec")}
-              />
-            ))}
-        </Col>
-      </Form.Group>
+      <div>
+        <Row>
+          <Col>
+            <Form.Group controlId="dropdown1">
+              <Form.Label>Option</Form.Label>
+              {Car?.car_options?.map((e) => (
+                <Form.Control
+                  key={e?.id_option}
+                  as="select"
+                  name={e?.id_option}
+                  value={selected_Option[`${e?.id_option}`] || ""}
+                  onChange={(el) => handleSelectChange(el, "option")}
+                >
+                  <option value={e?.id_option} selected hidden>
+                    {e?.option.type_option}
+                  </option>
+                  {Options?.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.type_option}
+                    </option>
+                  ))}
+                </Form.Control>
+              ))}
+            </Form.Group>
+          </Col>
+          <Col>
+            <Form.Group controlId="dropdown2">
+              <Form.Label>Spec</Form.Label>
+              {Car?.car_specs?.map((e) => (
+                <Form.Control
+                  key={e?.id_spec}
+                  as="select"
+                  name={e?.id_spec}
+                  value={selected_Spec[`${e?.id_spec}`] || ""}
+                  onChange={(el) => handleSelectChange(el, "spec")}
+                >
+                  <option value={e?.id_spec} selected hidden>
+                    {e?.spec.type_spec}
+                  </option>
+                  {Specs?.map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.type_spec}
+                    </option>
+                  ))}
+                </Form.Control>
+              ))}
+            </Form.Group>
+          </Col>
+        </Row>
+      </div>
       <Form.Group controlId="photo" className="mb-3">
         <Form.Label>Image</Form.Label>
         <Form.Control
@@ -250,12 +268,11 @@ function Addcar() {
           onChange={(e) => setPhoto(e.target.files[0])}
         />
       </Form.Group>
-
       <Button variant="primary" type="submit" disabled={isLoading}>
         {isLoading ? "Processing..." : "Register"}
       </Button>
     </Form>
   );
-}
+};
 
-export default Addcar;
+export default Editcar;

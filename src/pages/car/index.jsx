@@ -3,7 +3,9 @@ import { Row, Col, Card, Form, Image, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCar, deleteCar } from "../../redux/actions/cars";
+import { Link } from "react-router-dom";
 import ListGroup from "react-bootstrap/ListGroup";
+
 
 const Detailscar = () => {
   const navigate = useNavigate();
@@ -132,13 +134,16 @@ const Detailscar = () => {
                 >
                   Delete
                 </Button>
-                 <Button
-                variant="primary"
-                className="mt-4 mx-4"
-                onClick={() => console.log("edit")}
-              >
-                edit
-              </Button>
+                <Button
+                  variant="primary"
+                  className="mt-4 mx-4"
+                  as={Link}
+                  to={`/edit_mobil/${id}`}
+                  style={{ textDecoration: "none" }}
+                  // onClick={() => navigate(`/edit_mobil/:${id}`)}
+                >
+                  edit
+                </Button>
               </>
             )}
           </Card.Body>

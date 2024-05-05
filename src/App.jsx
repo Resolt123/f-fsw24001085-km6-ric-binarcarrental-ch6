@@ -17,6 +17,7 @@ import UnProtected from "./components/Unprotected";
 import store from "./redux/store";
 import CarProfile from "./pages/car";
 import Addcar from "./pages/add_mobil";
+import Editcar from "./pages/edit_car";
 
 const router = createBrowserRouter([
   {
@@ -77,10 +78,21 @@ const router = createBrowserRouter([
   {
     path: "/tambah_mobil",
     element: (
-      <Protected roles={["admin"]}>
+      <Protected roles={["admin","super-admin"]}>
         <Navbar />
         <Container className="mt-5">
           <Addcar />
+        </Container>
+      </Protected>
+    ),
+  },
+  {
+    path: "/edit_mobil/:id",
+    element: (
+      <Protected roles={["admin","super-admin"]}>
+        <Navbar />
+        <Container className="mt-5">
+          <Editcar />
         </Container>
       </Protected>
     ),
