@@ -14,11 +14,9 @@ const Home = () => {
   }, [dispatch]);
 
   return (
-    <Row>
+    <Row className="mx-2" noGutters>
       {Cars.length > 0 &&
-        Cars.map((car) => (
-          <CarCard key={car?.id} car={car} />
-        ))}
+        Cars.map((car) => <CarCard key={car?.id} car={car} />)}
     </Row>
   );
 };

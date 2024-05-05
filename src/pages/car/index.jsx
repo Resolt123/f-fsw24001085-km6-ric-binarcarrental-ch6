@@ -33,7 +33,16 @@ const Detailscar = () => {
               ) : (
                 <>
                   {Car?.image && (
-                    <Image src={Car?.image} className="img-fluid" rounded />
+                    <Image
+                      src={Car?.image}
+                      className="img-fluid"
+                      rounded
+                      style={{
+                        width: "100%",
+                        height: "20em",
+                        objectFit: "cover",
+                      }}
+                    />
                   )}
 
                   <div className={Car?.image && "mt-4"}>
